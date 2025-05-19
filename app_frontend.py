@@ -75,7 +75,7 @@ with tab1:
             selected_image = Image.open(img_path)
 
             if selected_image:
-                img_placeholder = st.image(selected_image, caption="Selected Photo", use_column_width=True)
+                img_placeholder = st.image(selected_image, caption="Selected Photo", use_container_width =True)
 
                 detect_objects_func(selected_image, img_placeholder)
 
