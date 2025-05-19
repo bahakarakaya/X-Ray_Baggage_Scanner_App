@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import uuid
 from model_handler import YOLOModel
+from db.database import *
 
 # initializes Flask app
 app = Flask(__name__)
@@ -18,7 +19,7 @@ model = YOLOModel("models/xray_model_- 18 may 2025 16_32.pt")
 def home():
     return "X-Ray API is working!"
 
-# This endpint, gets an image from the user, process and answer
+# This endpoint, gets an image from the user, process and answer
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'image' not in request.files:
@@ -35,14 +36,28 @@ def predict():
 
     try:
         result = model.predict(filepath)
+
+        object_labels = [obj['label'] for obj in result['objects_detected']]
+        object_str = ", ".join(object_labels)
+
+        #gets filename
+        image_id = os.path.splitext(os.path.basename(filepath))[0]
+
+        # Saving to database
+        insert_prediction({
+            "image_id": image_id,
+            "objects_detected": object_str,
+            "status": result["status"]
+        })
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
         try:
             os.remove(filepath)
-            print("deleted?")
         except Exception as remove_err:
             print(f"Failed to delete file: {filepath}, error: {remove_err}")
+            return None
 
     return jsonify(result)
 
