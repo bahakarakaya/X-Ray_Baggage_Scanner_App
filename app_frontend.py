@@ -60,5 +60,14 @@ with tab2:
             "status": "Status",
             "created_at": "Created at"
         }, use_container_width=True)
+
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Download as .csv",
+            data=csv,
+            file_name='xray_pred_history.csv',
+            mime='text/csv'
+        )
+
     else:
         st.info("No predictions have been registered yet.")
