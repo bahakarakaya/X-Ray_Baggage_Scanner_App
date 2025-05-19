@@ -48,12 +48,13 @@ def insert_prediction(data):
         cursor.close()
         conn.close()
 
-def get_predictions():
+def get_all_predictions():
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT * FROM predictions ORDER BY created_at DESC")
         rows = cursor.fetchall()
+        print("Fetched rows:", rows)
         return rows
     except Exception as e:
         print("Error while fetching predictions:", e)
